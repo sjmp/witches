@@ -24,6 +24,7 @@ namespace Assets.Scripts
         {
             CheckAutoRighting();
 
+            Debug.Log(Rigidbody.velocity.magnitude);
 
             if (Input.GetKey("right"))
             {
@@ -43,7 +44,10 @@ namespace Assets.Scripts
 
         void ForceX(bool left)
         {
-            Rigidbody.AddForce(left ? -transform.right * Speed : transform.right * Speed);
+            if (Rigidbody.velocity.magnitude < TopSpeed)
+            {
+                Rigidbody.AddForce(left ? -transform.right * Speed : transform.right * Speed);
+            } 
         }
 
         void BounceUp()
