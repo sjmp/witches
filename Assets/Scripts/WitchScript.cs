@@ -39,10 +39,6 @@ namespace Assets.Scripts
             {
                 BounceUp();
             }
-
-
-      
-
         }
 
         void ForceX(bool left)
@@ -66,14 +62,12 @@ namespace Assets.Scripts
             {
                 Rigidbody.AddTorque((float)RotationCorrection, ForceMode2D.Impulse);
             }
-            else if (transform.localRotation.z > 0.4)
+
+            if (transform.localRotation.z > 0.4)
             {
                 Rigidbody.AddTorque((float)-RotationCorrection, ForceMode2D.Impulse);
             }
-            else
-            {
-                Debug.Log(transform.localRotation.z);
-            }
+     
 
         }
     }
