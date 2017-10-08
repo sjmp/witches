@@ -23,8 +23,7 @@ namespace Assets.Scripts
         void Update()
         {
             CheckAutoRighting();
-
-            Debug.Log(Rigidbody.velocity.magnitude);
+            
 
             if (Input.GetKey("right"))
             {
