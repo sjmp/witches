@@ -84,11 +84,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\C%23Classes\Item.cs" />
     <Compile Include="Assets\Scripts\C%23Classes\ItemGenerator.cs" />
-    <Compile Include="Assets\Scripts\C%23Classes\ItemScript.cs" />
+    <Compile Include="Assets\Scripts\C%23Classes\PrefabManager.cs" />
+    <Compile Include="Assets\Scripts\CustomEditor\NpcScriptCustomEditor.cs" />
     <Compile Include="Assets\Scripts\Monobehaviours\CameraScript.cs" />
+    <Compile Include="Assets\Scripts\Monobehaviours\InventoryScript.cs" />
     <Compile Include="Assets\Scripts\Monobehaviours\NpcScript.cs" />
-    <Compile Include="Assets\Scripts\Monobehaviours\SpeechBubbleScript.cs" />
     <Compile Include="Assets\Scripts\Monobehaviours\WitchScript.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

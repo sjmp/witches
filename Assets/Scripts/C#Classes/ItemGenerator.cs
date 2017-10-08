@@ -3,14 +3,18 @@
     public static class ItemGenerator
     {
 
-        public static ItemScript CreateItem()
+        public static Item CreateSendItem()
         {
-            return new ItemScript()
+            return new Item()
             {
                 Id = 1,
-                Name = "Eye of Newt",
-                For = "Placeholder"
+                ForId = 2
             };
+        }
+
+        public static int CreateWantItemId()
+        {
+            return 1;
         }
     }
 }

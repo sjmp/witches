@@ -5,27 +5,120 @@ namespace Assets.Scripts.Monobehaviours
     public class NpcScript : MonoBehaviour
     {
         public int Id;
-        public ItemScript ItemToSend;
-        private GameObject _speechBubble;
+        public int WaitingForItemId;
+        public Item ItemToSend;
+        public GameObject _speechBubble;
+        public bool PostMistress;
+        public int NextItemIn;
+
+        public int _countdown;
+
+        private PrefabManager _prefabManager;
 
         // Use this for initialization
         void Start ()
         {
-            ItemToSend = ItemGenerator.CreateItem();
+            _prefabManager = new PrefabManager();
+            DetermineSendOrRecieveItem();
+            _countdown = NextItemIn;
 
-            if (ItemToSend != null)
+
+        }
+
+        void Update()
+        {
+ 
+            Countdown();
+            
+            if (_speechBubble != null) return;
+
+            if ((ItemToSend != null && ItemToSend.Id != 0)|| WaitingForItemId != 0)
                 CreateSpeechBubble(ItemToSend);
         }
 
-        private void CreateSpeechBubble(ItemScript ItemToSend)
+        private void Countdown()
         {
-            _speechBubble = Instantiate(Resources.Load("SpeechBubble")) as GameObject;
-            if (_speechBubble != null) _speechBubble.transform.SetParent(gameObject.transform, false);
+            if (_countdown == 0)
+            {
+                if (ItemToSend != null && WaitingForItemId != 0)
+                    return;
+                
+                DetermineSendOrRecieveItem();
+
+            }
+            else
+            {
+                _countdown--;
+            }
+          
         }
 
-        // Update is called once per frame
-        void Update () {
-		
+        private void DetermineSendOrRecieveItem()
+        {
+            if (PostMistress)
+            {
+                CreateAnItemToSend();
+            }
+            else
+            {
+                CreateAnWantedItem();
+            }
+        }
+
+        private void CreateAnWantedItem()
+        {
+            WaitingForItemId = ItemGenerator.CreateWantItemId();
+        }
+
+        public void CreateAnItemToSend()
+        {
+            ItemToSend = ItemGenerator.CreateSendItem();
+        }
+
+        private void CreateSpeechBubble(Item ItemToSend)
+        {
+            _speechBubble = _prefabManager.Create("SpeechBubble", gameObject);
+            gameObject.GetComponent<BoxCollider2D>().enabled = true;
+        }
+
+        void OnTriggerEnter2D(Collider2D other)
+        {
+            other.GetComponent<WitchScript>().NearbyWitch = this;
+        }
+
+        void OnTriggerExit2D(Collider2D other)
+        {
+            other.GetComponent<WitchScript>().NearbyWitch = null;
+        }
+
+        public void TakeItem()
+        {
+            if (ItemToSend == null) return;
+            Debug.Log("Thanks!");
+            ItemToSend = null;
+            RemoveSpeechBubble();
+            _countdown = NextItemIn;
+        }
+
+        public void GiveItem(Item item)
+        {
+            if (item.Id != WaitingForItemId) return;
+            Debug.Log("Bang on time!");
+            WaitingForItemId = 0;
+            RemoveSpeechBubble();
+            _countdown = NextItemIn;
+        }
+
+        public void RemoveSpeechBubble()
+        {
+            Destroy(_speechBubble);
+            _speechBubble = null;
+        }
+
+        public void ClearItemToSend()
+        {
+            ItemToSend = null;
+            
         }
     }
 }
