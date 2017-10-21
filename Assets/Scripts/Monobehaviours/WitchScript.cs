@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Flight_Scripts;
 using Assets.Scripts.Monobehaviours;
 using UnityEngine;
 
@@ -7,60 +8,73 @@ namespace Assets.Scripts
 {
     public class WitchScript : MonoBehaviour
     {
-
         private PrefabManager PrefabManager;
 
         public Rigidbody2D Rigidbody;
         public SpriteRenderer SpriteRenderer;
         public GameObject Inventory;
         public GameObject Bag;
+        public GameObject HelpText;
 
-        public float Speed = 100;
-        public float Bounce = 500;
-        public float TopSpeed = 10;
-        public double RotationCorrection = 0.5;
+        public SimplifiedFlight Flight;
+
+
         public int MaxItemsInBag = 7;
         private bool _inventoryOpen;
 
   
-
         public NpcScript NearbyWitch;
         public List<Item> ItemsInBag;
 
         // Use this for initialization
         void Start()
         {
+            Flight = new SimplifiedFlight(Rigidbody, transform);
             CloseInventory();
         }
 
-        // Update is called once per frame
+        // OnUpdate is called once per frame
         void Update()
         {
-            CheckAutoRighting();
+            Flight.OnUpdate();
 
             if (NearbyWitch != null)
             {
                 if (Input.GetKeyDown(KeyCode.E))
                 {
+
                     InteractWithWitch(NearbyWitch);
   
                 }
             }
 
+            if (Input.GetKey(KeyCode.X))
+            {
+                HelpText.transform.localScale = new Vector3(0,0,0);
+            }
+
             if (Input.GetKey("right") || Input.GetKey(KeyCode.D))
             {
-                ForceX(false);
+                Flight.OnRight();
                 Direction(false);
             }
+
             if (Input.GetKey("left") || Input.GetKey(KeyCode.A))
             {
-                ForceX(true);
+                Flight.OnLeft();
                 Direction(true);
             }
+
             if (Input.GetKeyDown("up") || Input.GetKeyDown(KeyCode.W))
             {
-                BounceUp();
+                Flight.OnUp();
             }
+
+            if (Input.GetKeyDown("down") || Input.GetKeyDown(KeyCode.D))
+            {
+                Flight.OnDown();
+            }
+
             if (Input.GetKeyDown(KeyCode.Q)||Input.GetKeyDown(KeyCode.B))
             {
                 if (!_inventoryOpen)
@@ -134,37 +148,13 @@ namespace Assets.Scripts
             Inventory.GetComponent<InventoryScript>().SetVisible(true);
         }
 
-        void ForceX(bool left)
-        {
-            if (Rigidbody.velocity.magnitude < TopSpeed)
-            {
-                Rigidbody.AddForce(left ? -transform.right * Speed : transform.right * Speed);
-            } 
-        }
-
-        void BounceUp()
-        {
-            Rigidbody.AddForce(transform.up * Bounce);
-        }
-
         void Direction(bool movingLeft)
         {
             SpriteRenderer.flipX = movingLeft;
         }
 
-        void CheckAutoRighting()
-        {
-            if (transform.localRotation.z < -0.4)
-            {
-                Rigidbody.AddTorque((float)RotationCorrection, ForceMode2D.Impulse);
-            }
 
-            if (transform.localRotation.z > 0.4)
-            {
-                Rigidbody.AddTorque((float)-RotationCorrection, ForceMode2D.Impulse);
-            }
-        }
 
-       
+
     }
 }

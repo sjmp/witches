@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 3bbabffd955f83a4db34f0e611e1b345
+timeCreated: 1507488016
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Cera Basic
+  fontNames:
+  - Cera Basic
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
