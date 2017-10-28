@@ -9,11 +9,22 @@ namespace Assets.Scripts.Flight_Scripts
         private readonly Rigidbody2D _rigidBody;
         private readonly Transform _transform;
 
-        
-        public double _appliedForce = 1;
-        public double IncrementToAppliedForce = 0.1;
-        public int TargetY = 5;
-        public double MaxVelocity = 2;
+        public bool KeyDown;
+
+        public int UpwardAcceleration = 10;
+        public int DownwardAcceleration = 12;
+
+        public float UpwardTopSpeed = 1.5f;
+        public float DownwardTopSpeed = 2f;
+
+        public int CorrectionModifier = 4;
+        public float CorrectionToVelocity = 0.01f;
+
+
+        public float HoriztonalAcceleration = 10;
+        public float HoriztonalDecceleration = 20;
+        public float HorizontalTopSpeed = 10;
+
 
         public SimplifiedFlight(Rigidbody2D rigidBody, Transform transform)
         {
@@ -23,38 +34,79 @@ namespace Assets.Scripts.Flight_Scripts
 
         public void OnUp()
         {
-            throw new System.NotImplementedException();
+            KeyDown = true;
+            if (_rigidBody.velocity.y < 0)
+            {
+                _rigidBody.AddForce(Vector2.up * (UpwardAcceleration* CorrectionModifier));
+            }
+
+            if (_rigidBody.velocity.y < UpwardTopSpeed)
+            {
+                _rigidBody.AddForce(Vector2.up * UpwardAcceleration);
+            }
         }
 
         public void OnDown()
         {
-            throw new System.NotImplementedException();
+            KeyDown = true;
+            if (_rigidBody.velocity.y > 0)
+            {
+                _rigidBody.AddForce(Vector2.down * (DownwardTopSpeed * CorrectionModifier));
+            }
+
+            if (_rigidBody.velocity.y > -DownwardTopSpeed)
+            {
+                _rigidBody.AddForce(Vector2.down * DownwardAcceleration);
+            }
         }
 
         public void OnLeft()
         {
-            throw new System.NotImplementedException();
+            if (_rigidBody.velocity.x > 0)
+            {
+                _rigidBody.AddForce(Vector2.left * HoriztonalDecceleration);
+            }
+
+
+            if (_rigidBody.velocity.x > -HorizontalTopSpeed)
+            {
+                _rigidBody.AddForce(Vector2.left * HoriztonalAcceleration);
+            }
         }
 
         public void OnRight()
         {
-            throw new System.NotImplementedException();
+            if (_rigidBody.velocity.x < 0)
+            {
+                _rigidBody.AddForce(Vector2.right * HoriztonalDecceleration);
+            }
+
+            if (_rigidBody.velocity.x < HorizontalTopSpeed)
+            {
+                _rigidBody.AddForce(Vector2.right * HoriztonalAcceleration);
+            }
         }
 
-        public void OnUpdate()
+        public void OnFixedUpdate()
         {
-            //Consider making two states
-            //1 - within bounds of the targetY (target on keeping level)
-            //2 - outside of bounds of targetY (increase or decrease steadily until the point is achieved)
+            if (KeyDown) return;
 
-            if (_rigidBody.velocity.y > MaxVelocity || _rigidBody.velocity.y < -MaxVelocity)
-                return; 
+            if (_rigidBody.velocity.y > 0)
+            {
+                _rigidBody.velocity = new Vector2(_rigidBody.velocity.x, _rigidBody.velocity.y - CorrectionToVelocity);
+            }
 
-            var _targetModifier = (TargetY - _transform.localPosition.y)/TargetY;
-
-            if ((Math.Abs(_appliedForce) > 0.001) || (Math.Abs(_appliedForce) < -0.001))
-                _rigidBody.AddForce(_transform.up * (float) (_appliedForce*_targetModifier));
+            if (_rigidBody.velocity.y < 0)
+            {
+                _rigidBody.velocity = new Vector2(_rigidBody.velocity.x, _rigidBody.velocity.y + CorrectionToVelocity);
+            }
         }
-        
+
+        public void OnNoKey()
+        {
+            KeyDown = false;
+        }
+
+
     }
 }

@@ -33,11 +33,14 @@ namespace Assets.Scripts
             CloseInventory();
         }
 
-        // OnUpdate is called once per frame
+        void FixedUpdate()
+        {
+            Flight.OnFixedUpdate();
+        }
+
+        // OnFixedUpdate is called once per frame
         void Update()
         {
-            Flight.OnUpdate();
-
             if (NearbyWitch != null)
             {
                 if (Input.GetKeyDown(KeyCode.E))
@@ -48,31 +51,38 @@ namespace Assets.Scripts
                 }
             }
 
+            var KeyDown = false;
+
             if (Input.GetKey(KeyCode.X))
             {
                 HelpText.transform.localScale = new Vector3(0,0,0);
+                KeyDown = true;
             }
 
             if (Input.GetKey("right") || Input.GetKey(KeyCode.D))
             {
                 Flight.OnRight();
                 Direction(false);
+                KeyDown = true;
             }
 
             if (Input.GetKey("left") || Input.GetKey(KeyCode.A))
             {
                 Flight.OnLeft();
                 Direction(true);
+                KeyDown = true;
             }
 
-            if (Input.GetKeyDown("up") || Input.GetKeyDown(KeyCode.W))
+            if (Input.GetKey("up") || Input.GetKey(KeyCode.W))
             {
                 Flight.OnUp();
+                KeyDown = true;
             }
 
-            if (Input.GetKeyDown("down") || Input.GetKeyDown(KeyCode.D))
+            if (Input.GetKey("down") || Input.GetKey(KeyCode.S))
             {
                 Flight.OnDown();
+                KeyDown = true;
             }
 
             if (Input.GetKeyDown(KeyCode.Q)||Input.GetKeyDown(KeyCode.B))
@@ -88,6 +98,12 @@ namespace Assets.Scripts
 
                 _inventoryOpen = !_inventoryOpen;
             }
+
+            if (!KeyDown)
+            {
+                Flight.OnNoKey();
+            }
+            
         }
 
         //Talking to the nearby witch

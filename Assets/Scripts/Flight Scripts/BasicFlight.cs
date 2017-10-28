@@ -23,7 +23,7 @@ namespace Assets.Scripts
             _transform = transform;
         }
 
-        public void OnUpdate()
+        public void OnFixedUpdate()
         {
             CheckAutoRighting();
         }
@@ -48,6 +48,11 @@ namespace Assets.Scripts
         {
             ForceX(false);
           
+        }
+
+        public void OnNoKey()
+        {
+            throw new NotImplementedException();
         }
 
         void ForceX(bool left)
