@@ -15,21 +15,21 @@ namespace Assets.Scripts
         public GameObject Inventory;
         public GameObject Bag;
         public GameObject HelpText;
-
-        public SimplifiedFlight Flight;
-
-
+        
         public int MaxItemsInBag = 7;
         private bool _inventoryOpen;
-
-  
+        
         public NpcScript NearbyWitch;
         public List<Item> ItemsInBag;
+
+        public GameObject GroundCollider;
+        
+        public SimplifiedFlight Flight;
 
         // Use this for initialization
         void Start()
         {
-            Flight = new SimplifiedFlight(Rigidbody, transform);
+            Flight = new SimplifiedFlight(Rigidbody, gameObject);
             CloseInventory();
         }
 

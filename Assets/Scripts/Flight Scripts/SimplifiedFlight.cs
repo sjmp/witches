@@ -7,7 +7,7 @@ namespace Assets.Scripts.Flight_Scripts
     public class SimplifiedFlight : IFlightScript
     {
         private readonly Rigidbody2D _rigidBody;
-        private readonly Transform _transform;
+        private readonly GameObject _witch;
 
         public bool KeyDown;
 
@@ -19,17 +19,19 @@ namespace Assets.Scripts.Flight_Scripts
 
         public int CorrectionModifier = 4;
         public float CorrectionToVelocity = 0.01f;
-
-
+        
         public float HoriztonalAcceleration = 10;
         public float HoriztonalDecceleration = 20;
         public float HorizontalTopSpeed = 10;
 
+        public float MaxHeight = 10f;
+        public float IdealFromGround = 3f;
+       
 
-        public SimplifiedFlight(Rigidbody2D rigidBody, Transform transform)
+        public SimplifiedFlight(Rigidbody2D rigidBody, GameObject witch)
         {
             _rigidBody = rigidBody;
-            _transform = transform;
+            _witch = witch;
         }
 
         public void OnUp()
@@ -64,13 +66,13 @@ namespace Assets.Scripts.Flight_Scripts
         {
             if (_rigidBody.velocity.x > 0)
             {
-                _rigidBody.AddForce(Vector2.left * HoriztonalDecceleration);
+                _addRelativeForce(Vector2.left * HoriztonalDecceleration);
             }
 
 
             if (_rigidBody.velocity.x > -HorizontalTopSpeed)
             {
-                _rigidBody.AddForce(Vector2.left * HoriztonalAcceleration);
+                _addRelativeForce(Vector2.left * HoriztonalAcceleration);
             }
         }
 
@@ -78,12 +80,12 @@ namespace Assets.Scripts.Flight_Scripts
         {
             if (_rigidBody.velocity.x < 0)
             {
-                _rigidBody.AddForce(Vector2.right * HoriztonalDecceleration);
+                _addRelativeForce(Vector2.right * HoriztonalDecceleration);
             }
 
             if (_rigidBody.velocity.x < HorizontalTopSpeed)
             {
-                _rigidBody.AddForce(Vector2.right * HoriztonalAcceleration);
+                _addRelativeForce(Vector2.right * HoriztonalAcceleration);
             }
         }
 
@@ -107,6 +109,43 @@ namespace Assets.Scripts.Flight_Scripts
             KeyDown = false;
         }
 
+        private void _addRelativeForce(Vector2 force)
+        {
+//            Debug.Log(_calculateModifier());
+            _rigidBody.AddForce(force); //* _calculateModifier());
+        }
+
+        private float _floorMeasure()
+        {
+            var ground = new Vector2(_witch.transform.position.x, -(MaxHeight * 1.5f));
+
+            var output = Physics2D.Linecast(_witch.transform.position, ground, 1 << LayerMask.NameToLayer("Path"));
+
+            return output.distance;
+        }
+
+        private float _calculateModifier()
+        {
+            var distanceFromFloor = _floorMeasure();
+
+            float asPercentage;
+
+            if (distanceFromFloor < IdealFromGround)
+            {
+                asPercentage = distanceFromFloor / IdealFromGround;
+            }
+            else
+            {
+                asPercentage = 1 - (distanceFromFloor - IdealFromGround) / (MaxHeight - IdealFromGround);
+            }
+
+            if (asPercentage < 0)
+            {
+                return 0.01f;
+            }
+
+            return asPercentage;
+        }
 
     }
 }
